@@ -1,29 +1,30 @@
 #include <stdio.h>
 
 /**
- * main - Point d'entrée du programme
+ * main - Point d'entree du programme
  *
- * Return: Toujours 0
+ * Description: Affiche l'alphabet en minuscules, puis en majuscules.
+ * Return: Toujours 0 (Succes)
  */
 int main(void)
 {
-    char lettre;
+	char lettre;
 
-    lettre = 'a';
-    while (lettre <= 'z')
-    {
-        putchar(lettre);
-        lettre++;
-    }
+	lettre = 'a';
+	while (lettre <= 'z')
+	{
+		putchar(lettre);
+		lettre++;
+	}
 
-    lettre = 'A';
-    while (lettre <= 'Z')
-    {
-        putchar(lettre);
-        lettre++;
-    }
+	lettre = 'A';
+	while (lettre <= 'Z')
+	{
+		putchar(lettre);
+		lettre++;
+	}
 
-    putchar('\n');
+	putchar('\n');
 
-    return (0);
+	return (0);
 }
