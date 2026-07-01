@@ -12,14 +12,14 @@ void rev_string(char *s)
 	int end = 0;
 	char temp;
 
-	/* 1. Trouver la longueur de la chaîne pour positionner 'end' à la fin */
+	/* Trouver la longueur de la chaîne */
 	while (s[end] != '\0')
 	{
 		end++;
 	}
-	end--; /* On recule de 1 pour ignorer le '\0' et être sur le dernier caractère */
+	end--; /* On recule de 1 pour pointer sur le dernier caractère */
 
-	/* 2. Échanger les caractères jusqu'au milieu de la chaîne */
+	/* Échanger les caractères jusqu'au milieu */
 	while (start < end)
 	{
 		temp = s[start];
