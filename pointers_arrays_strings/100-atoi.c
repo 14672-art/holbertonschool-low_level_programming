@@ -1,41 +1,35 @@
 #include "main.h"
 
 /**
- * _atoi - Convertit une chaîne de caractères en entier.
- * @s: La chaîne à convertir.
+ * _atoi - Convertit une chaine de caracteres en entier.
+ * @s: La chaine a convertir.
  *
- * Return: L'entier converti, ou 0 si aucun nombre n'est trouvé.
+ * Return: L'entier converti, ou 0 si aucun nombre.
  */
 int _atoi(char *s)
 {
-	int i = 0;
-	int sign = 1;
-	int res = 0;
-	int found = 0;
+	int index = 0;
+	int signe = 1;
+	unsigned int resultat = 0;
+	int indicateur = 0;
 
-	while (s[i] != '\0')
+	while (s[index] != '\0')
 	{
-		if (s[i] == '-')
+		if (s[index] == '-')
 		{
-			sign *= -1;
+			signe *= -1;
 		}
-		else if (s[i] >= '0' && s[i] <= '9')
+		else if (s[index] >= '0' && s[index] <= '9')
 		{
-			found = 1;
-			/* Calcul direct en négatif pour esquiver le flag overflow */
-			res = res * 10 - (s[i] - '0');
+			indicateur = 1;
+			resultat = (resultat * 10) + (s[index] - '0');
 		}
-		else if (found == 1)
+		else if (indicateur == 1)
 		{
 			break;
 		}
-		i++;
+		index++;
 	}
 
-	if (sign > 0)
-	{
-		return (-res);
-	}
-
-	return (res);
+	return (resultat * signe);
 }
