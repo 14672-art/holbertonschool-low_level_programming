@@ -12,14 +12,14 @@ char *_strncpy(char *dest, char *src, int n)
 {
 	int i = 0;
 
-	/* 1. On copie src dans dest tant qu'on a des caractères et qu'on respecte n */
+	/* On copie src dans dest tant qu'on respecte n */
 	while (i < n && src[i] != '\0')
 	{
 		dest[i] = src[i];
 		i++;
 	}
 
-	/* 2. Le piège : si src était plus courte que n, on remplit le reste de \0 */
+	/* Si src est plus courte que n, on remplit de \0 */
 	while (i < n)
 	{
 		dest[i] = '\0';
