@@ -2,8 +2,8 @@
 #include <stdio.h>
 
 /**
- * print_diagsums - affiche la somme des deux diagonales d'une matrice carree
- * @a: pointeur vers le premier element de la matrice (traitee comme un tableau 1D)
+ * print_diagsums - affiche la somme des deux diagonales
+ * @a: pointeur vers la matrice (tableau 1D)
  * @size: la taille de la matrice (largeur/hauteur)
  *
  * Return: void
