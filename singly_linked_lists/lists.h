@@ -4,12 +4,12 @@
 #include <stddef.h>
 
 /**
- * struct list_s - singly linked list
- * @str: string - (malloc'ed string)
- * @len: length of the string
- * @next: points to the next node
+ * struct list_s - liste simplement chaînée
+ * @str: chaîne de caractères - (chaîne allouée dynamiquement)
+ * @len: longueur de la chaîne
+ * @next: pointe vers le nœud suivant
  *
- * Description: singly linked list node structure
+ * Description: structure de nœud pour une liste simplement chaînée
  */
 typedef struct list_s
 {
@@ -19,5 +19,6 @@ typedef struct list_s
 } list_t;
 
 size_t print_list(const list_t *h);
+size_t list_len(const list_t *h);
 
 #endif /* LISTS_H */
