@@ -2,12 +2,12 @@
 #include <stdlib.h>
 
 /**
- * insert_dnodeint_at_index - Insère un nouveau nœud à une position donnée
- * @h: Pointeur vers le pointeur de la tête de la liste
- * @idx: L'index où ajouter le nouveau nœud (commence à 0)
- * @n: La valeur à stocker dans le nœud
+ * insert_dnodeint_at_index - Insere un noeud a une position donnee
+ * @h: Pointeur vers le pointeur de la tete de la liste
+ * @idx: L'index ou ajouter le nouveau noeud (commence a 0)
+ * @n: La valeur a stocker dans le noeud
  *
- * Return: L'adresse du nouveau nœud, ou NULL en cas d'échec
+ * Return: L'adresse du nouveau noeud, ou NULL en cas d'echec
  */
 dlistint_t *insert_dnodeint_at_index(dlistint_t **h, unsigned int idx, int n)
 {
@@ -17,28 +17,24 @@ dlistint_t *insert_dnodeint_at_index(dlistint_t **h, unsigned int idx, int n)
 	if (h == NULL)
 		return (NULL);
 
-	/* Si l'insertion se fait au début (index 0) */
 	if (idx == 0)
 		return (add_dnodeint(h, n));
 
 	temp = *h;
 
-	/* Parcourir la liste jusqu'à l'élément précédant la position souhaitée */
+	/* Parcourir la liste jusqu'au noeud precedent */
 	while (temp != NULL && i < idx - 1)
 	{
 		temp = temp->next;
 		i++;
 	}
 
-	/* Si l'index est invalide (en dehors de la liste) */
 	if (temp == NULL)
 		return (NULL);
 
-	/* Si l'insertion se fait à la toute fin */
 	if (temp->next == NULL)
 		return (add_dnodeint_end(h, n));
 
-	/* Création et insertion du nouveau nœud au milieu */
 	new_node = malloc(sizeof(dlistint_t));
 	if (new_node == NULL)
 		return (NULL);
