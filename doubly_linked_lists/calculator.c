@@ -1,14 +1,18 @@
 #include <stdio.h>
 
 /**
- * main - Entree du programme de calculatrice simple
+ * main - Simple calculator program handling standard arithmetic operations.
  *
- * Return: Toujours 0 (Succes)
+ * Description: Supports addition (1), subtraction (2), multiplication (3),
+ * and division (4) using floating-point values for consistent decimal
+ * operations across all choices. Choice 0 exits the program.
+ *
+ * Return: Always 0 (Success).
  */
 int main(void)
 {
 	int choice;
-	int a, b;
+	double a, b;
 
 	while (1)
 	{
@@ -22,29 +26,28 @@ int main(void)
 			break;
 		}
 
-		if (choice == 1)
+		if (choice >= 1 && choice <= 4)
 		{
 			printf("A: ");
-			scanf("%d", &a);
+			if (scanf("%lf", &a) != 1)
+				break;
 			printf("B: ");
-			scanf("%d", &b);
-			printf("Result: %d\n", a + b);
-		}
-		else if (choice == 2)
-		{
-			printf("A: ");
-			scanf("%d", &a);
-			printf("B: ");
-			scanf("%d", &b);
-			printf("Result: %d\n", a - b);
-		}
-		else if (choice == 3)
-		{
-			printf("A: ");
-			scanf("%d", &a);
-			printf("B: ");
-			scanf("%d", &b);
-			printf("Result: %d\n", a * b);
+			if (scanf("%lf", &b) != 1)
+				break;
+
+			if (choice == 1)
+				printf("Result: %g\n", a + b);
+			else if (choice == 2)
+				printf("Result: %g\n", a - b);
+			else if (choice == 3)
+				printf("Result: %g\n", a * b);
+			else if (choice == 4)
+			{
+				if (b == 0)
+					printf("Error: division by zero\n");
+				else
+					printf("Result: %g\n", a / b);
+			}
 		}
 		else
 		{
