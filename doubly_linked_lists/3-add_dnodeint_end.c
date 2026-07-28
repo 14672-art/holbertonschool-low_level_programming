@@ -23,6 +23,7 @@ dlistint_t *add_dnodeint_end(dlistint_t **head, const int n)
 	new_node->n = n;
 	new_node->next = NULL;
 
+	/* Si la liste est vide, le nouveau nœud devient la tête */
 	if (*head == NULL)
 	{
 		new_node->prev = NULL;
@@ -30,6 +31,7 @@ dlistint_t *add_dnodeint_end(dlistint_t **head, const int n)
 		return (new_node);
 	}
 
+	/* Parcourir la liste jusqu'au dernier nœud */
 	temp = *head;
 	while (temp->next != NULL)
 		temp = temp->next;
