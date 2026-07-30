@@ -4,8 +4,8 @@
  * hash_table_print - Affiche une table de hachage.
  * @ht: La table de hachage à afficher.
  *
- * Description: Affiche les couples clé/valeur dans l'ordre où ils apparaissent
- * dans le tableau, puis dans les listes chaînées.
+ * Description: Affiche les couples clé/valeur dans l'ordre
+ * ou ils apparaissent dans le tableau et les listes.
  */
 void hash_table_print(const hash_table_t *ht)
 {
