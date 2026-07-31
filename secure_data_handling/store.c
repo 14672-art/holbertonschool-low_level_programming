@@ -3,9 +3,9 @@
 #include "store.h"
 
 /**
- * store_create - Initialise la structure du store.
+ * store_create - Initialise le magasin de sessions.
  *
- * Return: Pointeur vers le store, ou NULL en cas d'échec.
+ * Return: Pointeur vers le store alloué, ou NULL en cas d'échec.
  */
 store_t *store_create(void)
 {
@@ -21,9 +21,9 @@ store_t *store_create(void)
 }
 
 /**
- * store_lookup - Recherche une session par son identifiant.
- * @store: Pointeur vers le store.
- * @id: Identifiant de la session.
+ * store_lookup - Recherche une session par son ID.
+ * @store: Pointeur vers le magasin.
+ * @id: Identifiant recherché.
  *
  * Return: Pointeur vers la session si trouvée, NULL sinon.
  */
@@ -47,11 +47,11 @@ session_t *store_lookup(store_t *store, const char *id)
 }
 
 /**
- * store_insert - Insère une session de manière sécurisée dans le store.
- * @store: Pointeur vers le store.
- * @session: Pointeur vers la session à insérer.
+ * store_insert - Insère une session de manière sécurisée dans le magasin.
+ * @store: Pointeur vers le magasin.
+ * @session: Session à insérer.
  *
- * Return: 0 en cas de succès, -1 en cas d'échec ou si l'ID existe déjà.
+ * Return: 0 en cas de succès, -1 en cas d'échec ou de doublon.
  */
 int store_insert(store_t *store, session_t *session)
 {
@@ -60,7 +60,7 @@ int store_insert(store_t *store, session_t *session)
 	if (!store || !session || !session->id)
 		return (-1);
 
-	/* Protection contre les doublons d'ID */
+	/* Protection contre les doublons */
 	if (store_lookup(store, session->id) != NULL)
 		return (-1);
 
@@ -76,13 +76,14 @@ int store_insert(store_t *store, session_t *session)
 }
 
 /**
- * store_remove - Supprime une session du store par son ID.
- * @store: Pointeur vers le store.
- * @id: Identifiant de la session.
+ * store_remove - Supprime une session du magasin avec transfert de propriété.
+ * @store: Pointeur vers le magasin.
+ * @id: Identifiant de la session à supprimer.
+ * @out: Pointeur de sortie pour récupérer la session (si non NULL).
  *
- * Return: 0 si la session a été trouvée et supprimée, -1 sinon.
+ * Return: 0 en cas de succès, -1 si non trouvée.
  */
-int store_remove(store_t *store, const char *id)
+int store_remove(store_t *store, const char *id, session_t **out)
 {
 	node_t *current, *prev;
 
@@ -102,8 +103,17 @@ int store_remove(store_t *store, const char *id)
 			else
 				store->head = current->next;
 
-			/* Nettoyage propre et sécurisé */
-			session_destroy(current->session);
+			if (out)
+			{
+				/* Transfert de propriété : l'appelant récupère la session */
+				*out = current->session;
+			}
+			else
+			{
+				/* Pas de récepteur : destruction sécurisée de la session */
+				session_destroy(current->session);
+			}
+
 			current->session = NULL;
 			current->next = NULL;
 			free(current);
@@ -117,8 +127,8 @@ int store_remove(store_t *store, const char *id)
 }
 
 /**
- * store_clear - Nettoie toutes les sessions et réinitialise le store.
- * @store: Pointeur vers le store.
+ * store_clear - Vidage défensif du magasin.
+ * @store: Pointeur vers le magasin.
  */
 void store_clear(store_t *store)
 {
@@ -147,8 +157,8 @@ void store_clear(store_t *store)
 }
 
 /**
- * store_destroy - Libère intégralement le store et sa mémoire.
- * @store: Pointeur vers le store.
+ * store_destroy - Détruit complètement le magasin.
+ * @store: Pointeur vers le magasin.
  */
 void store_destroy(store_t *store)
 {
