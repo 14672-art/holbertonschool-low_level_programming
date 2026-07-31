@@ -3,9 +3,9 @@
 #include "store.h"
 
 /**
- * store_create - Initialise le magasin.
+ * store_create - Initialise le magasin de sessions.
  *
- * Return: Pointeur vers le store, ou NULL en cas d'échec.
+ * Return: Pointeur vers le store alloué, ou NULL en cas d'échec.
  */
 store_t *store_create(void)
 {
@@ -37,9 +37,9 @@ session_t *store_lookup(store_t *store, const char *id)
 	current = store->head;
 	while (current)
 	{
-		if (current->sess && current->sess->id &&
-		    strcmp(current->sess->id, id) == 0)
-			return (current->sess);
+		if (current->session && current->session->id &&
+		    strcmp(current->session->id, id) == 0)
+			return (current->session);
 		current = current->next;
 	}
 
@@ -47,7 +47,7 @@ session_t *store_lookup(store_t *store, const char *id)
 }
 
 /**
- * store_insert - Insère une session dans le magasin.
+ * store_insert - Insère une session de manière sécurisée dans le magasin.
  * @store: Pointeur vers le magasin.
  * @session: Session à insérer.
  *
@@ -68,7 +68,7 @@ int store_insert(store_t *store, session_t *session)
 	if (!new_node)
 		return (-1);
 
-	new_node->sess = session;
+	new_node->session = session;
 	new_node->next = store->head;
 	store->head = new_node;
 
@@ -76,7 +76,7 @@ int store_insert(store_t *store, session_t *session)
 }
 
 /**
- * store_remove - Supprime une session par son ID.
+ * store_remove - Supprime une session spécifique du magasin.
  * @store: Pointeur vers le magasin.
  * @id: Identifiant de la session à supprimer.
  *
@@ -94,16 +94,16 @@ int store_remove(store_t *store, const char *id)
 
 	while (current)
 	{
-		if (current->sess && current->sess->id &&
-		    strcmp(current->sess->id, id) == 0)
+		if (current->session && current->session->id &&
+		    strcmp(current->session->id, id) == 0)
 		{
 			if (prev)
 				prev->next = current->next;
 			else
 				store->head = current->next;
 
-			session_destroy(current->sess);
-			current->sess = NULL;
+			session_destroy(current->session);
+			current->session = NULL;
 			current->next = NULL;
 			free(current);
 			return (0);
@@ -116,8 +116,8 @@ int store_remove(store_t *store, const char *id)
 }
 
 /**
- * store_clear - Vide complètement le magasin.
- * @store: Pointeur vers le magasin.
+ * store_clear - Vidage défensif et réutilisable du magasin.
+ * @store: Pointeur vers le magasin à vider.
  */
 void store_clear(store_t *store)
 {
@@ -133,10 +133,10 @@ void store_clear(store_t *store)
 	{
 		next = current->next;
 
-		if (current->sess)
+		if (current->session)
 		{
-			session_destroy(current->sess);
-			current->sess = NULL;
+			session_destroy(current->session);
+			current->session = NULL;
 		}
 
 		current->next = NULL;
