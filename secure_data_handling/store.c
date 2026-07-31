@@ -2,6 +2,11 @@
 #include <string.h>
 #include "store.h"
 
+/**
+ * store_create - Initialise le magasin.
+ *
+ * Return: Pointeur vers le store, ou NULL en cas d'échec.
+ */
 store_t *store_create(void)
 {
 	store_t *store;
@@ -11,34 +16,17 @@ store_t *store_create(void)
 		return (NULL);
 
 	store->head = NULL;
-	store->count = 0;
 
 	return (store);
 }
 
-int store_insert(store_t *store, session_t *session)
-{
-	node_t *new_node;
-
-	if (!store || !session || !session->id)
-		return (-1);
-
-	/* Rejet des doublons sans fuite mémoire */
-	if (store_lookup(store, session->id) != NULL)
-		return (-1);
-
-	new_node = malloc(sizeof(node_t));
-	if (!new_node)
-		return (-1);
-
-	new_node->session = session;
-	new_node->next = store->head;
-	store->head = new_node;
-	store->count++;
-
-	return (0);
-}
-
+/**
+ * store_lookup - Recherche une session par son ID.
+ * @store: Pointeur vers le magasin.
+ * @id: Identifiant recherché.
+ *
+ * Return: Pointeur vers la session si trouvée, NULL sinon.
+ */
 session_t *store_lookup(store_t *store, const char *id)
 {
 	node_t *current;
@@ -49,15 +37,51 @@ session_t *store_lookup(store_t *store, const char *id)
 	current = store->head;
 	while (current)
 	{
-		if (current->session && current->session->id &&
-		    strcmp(current->session->id, id) == 0)
-			return (current->session);
+		if (current->sess && current->sess->id &&
+		    strcmp(current->sess->id, id) == 0)
+			return (current->sess);
 		current = current->next;
 	}
 
 	return (NULL);
 }
 
+/**
+ * store_insert - Insère une session dans le magasin.
+ * @store: Pointeur vers le magasin.
+ * @session: Session à insérer.
+ *
+ * Return: 0 en cas de succès, -1 en cas d'échec ou de doublon.
+ */
+int store_insert(store_t *store, session_t *session)
+{
+	node_t *new_node;
+
+	if (!store || !session || !session->id)
+		return (-1);
+
+	/* Evite les doublons */
+	if (store_lookup(store, session->id) != NULL)
+		return (-1);
+
+	new_node = malloc(sizeof(node_t));
+	if (!new_node)
+		return (-1);
+
+	new_node->sess = session;
+	new_node->next = store->head;
+	store->head = new_node;
+
+	return (0);
+}
+
+/**
+ * store_remove - Supprime une session par son ID.
+ * @store: Pointeur vers le magasin.
+ * @id: Identifiant de la session à supprimer.
+ *
+ * Return: 0 en cas de succès, -1 si non trouvée.
+ */
 int store_remove(store_t *store, const char *id)
 {
 	node_t *current, *prev;
@@ -70,19 +94,18 @@ int store_remove(store_t *store, const char *id)
 
 	while (current)
 	{
-		if (current->session && current->session->id &&
-		    strcmp(current->session->id, id) == 0)
+		if (current->sess && current->sess->id &&
+		    strcmp(current->sess->id, id) == 0)
 		{
 			if (prev)
 				prev->next = current->next;
 			else
 				store->head = current->next;
 
-			session_destroy(current->session);
-			current->session = NULL;
+			session_destroy(current->sess);
+			current->sess = NULL;
 			current->next = NULL;
 			free(current);
-			store->count--;
 			return (0);
 		}
 		prev = current;
@@ -92,6 +115,10 @@ int store_remove(store_t *store, const char *id)
 	return (-1);
 }
 
+/**
+ * store_clear - Vide complètement le magasin.
+ * @store: Pointeur vers le magasin.
+ */
 void store_clear(store_t *store)
 {
 	node_t *current, *next;
@@ -101,16 +128,15 @@ void store_clear(store_t *store)
 
 	current = store->head;
 	store->head = NULL;
-	store->count = 0;
 
 	while (current)
 	{
 		next = current->next;
 
-		if (current->session)
+		if (current->sess)
 		{
-			session_destroy(current->session);
-			current->session = NULL;
+			session_destroy(current->sess);
+			current->sess = NULL;
 		}
 
 		current->next = NULL;
@@ -119,6 +145,10 @@ void store_clear(store_t *store)
 	}
 }
 
+/**
+ * store_destroy - Détruit le magasin et libère toute la mémoire.
+ * @store: Pointeur vers le magasin.
+ */
 void store_destroy(store_t *store)
 {
 	if (!store)
