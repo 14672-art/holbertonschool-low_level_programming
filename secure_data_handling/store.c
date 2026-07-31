@@ -47,7 +47,7 @@ session_t *store_lookup(store_t *store, const char *id)
 }
 
 /**
- * store_insert - Insère une session de manière sécurisée dans le magasin.
+ * store_insert - Insère une session de manière sécurisée.
  * @store: Pointeur vers le magasin.
  * @session: Session à insérer.
  *
@@ -60,7 +60,6 @@ int store_insert(store_t *store, session_t *session)
 	if (!store || !session || !session->id)
 		return (-1);
 
-	/* Protection contre les doublons */
 	if (store_lookup(store, session->id) != NULL)
 		return (-1);
 
@@ -76,9 +75,9 @@ int store_insert(store_t *store, session_t *session)
 }
 
 /**
- * store_remove - Supprime une session du magasin avec transfert de propriété.
+ * store_remove - Supprime une session avec transfert de propriété facultatif.
  * @store: Pointeur vers le magasin.
- * @id: Identifiant de la session à supprimer.
+ * @id: Identifiant de la session.
  * @out: Pointeur de sortie pour récupérer la session (si non NULL).
  *
  * Return: 0 en cas de succès, -1 si non trouvée.
@@ -105,12 +104,10 @@ int store_remove(store_t *store, const char *id, session_t **out)
 
 			if (out)
 			{
-				/* Transfert de propriété : l'appelant récupère la session */
 				*out = current->session;
 			}
 			else
 			{
-				/* Pas de récepteur : destruction sécurisée de la session */
 				session_destroy(current->session);
 			}
 
