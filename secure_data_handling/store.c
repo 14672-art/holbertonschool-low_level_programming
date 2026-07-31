@@ -2,11 +2,6 @@
 #include <string.h>
 #include "store.h"
 
-/**
- * store_create - Initialise une nouvelle structure de magasin.
- *
- * Return: Pointeur vers le store alloué, ou NULL en cas d'échec.
- */
 store_t *store_create(void)
 {
 	store_t *store;
@@ -21,13 +16,6 @@ store_t *store_create(void)
 	return (store);
 }
 
-/**
- * store_insert - Insère une session de manière sécurisée dans le magasin.
- * @store: Pointeur vers le magasin.
- * @session: Session à insérer.
- *
- * Return: 0 en cas de succès, -1 en cas d'échec ou de doublon.
- */
 int store_insert(store_t *store, session_t *session)
 {
 	node_t *new_node;
@@ -35,7 +23,7 @@ int store_insert(store_t *store, session_t *session)
 	if (!store || !session || !session->id)
 		return (-1);
 
-	/* Vérification des doublons pour éviter la corruption */
+	/* Rejet des doublons sans fuite mémoire */
 	if (store_lookup(store, session->id) != NULL)
 		return (-1);
 
@@ -51,13 +39,6 @@ int store_insert(store_t *store, session_t *session)
 	return (0);
 }
 
-/**
- * store_lookup - Recherche une session par son identifiant.
- * @store: Pointeur vers le magasin.
- * @id: Identifiant de la session.
- *
- * Return: Pointeur vers la session si trouvée, NULL sinon.
- */
 session_t *store_lookup(store_t *store, const char *id)
 {
 	node_t *current;
@@ -77,13 +58,6 @@ session_t *store_lookup(store_t *store, const char *id)
 	return (NULL);
 }
 
-/**
- * store_remove - Supprime une session spécifique du magasin.
- * @store: Pointeur vers le magasin.
- * @id: Identifiant de la session à supprimer.
- *
- * Return: 0 si la suppression a réussi, -1 si non trouvée.
- */
 int store_remove(store_t *store, const char *id)
 {
 	node_t *current, *prev;
@@ -104,11 +78,9 @@ int store_remove(store_t *store, const char *id)
 			else
 				store->head = current->next;
 
-			/* Destruction sécurisée de la session */
 			session_destroy(current->session);
 			current->session = NULL;
 			current->next = NULL;
-
 			free(current);
 			store->count--;
 			return (0);
@@ -120,10 +92,6 @@ int store_remove(store_t *store, const char *id)
 	return (-1);
 }
 
-/**
- * store_clear - Vidage défensif et répétable du magasin.
- * @store: Pointeur vers le magasin à vider.
- */
 void store_clear(store_t *store)
 {
 	node_t *current, *next;
@@ -132,8 +100,8 @@ void store_clear(store_t *store)
 		return;
 
 	current = store->head;
-	store->head = NULL; /* Invalidation immédiate de la tête */
-	store->count = 0;   /* Réinitialisation du compteur */
+	store->head = NULL;
+	store->count = 0;
 
 	while (current)
 	{
@@ -151,18 +119,11 @@ void store_clear(store_t *store)
 	}
 }
 
-/**
- * store_destroy - Libère le magasin et réinitialise son pointeur.
- * @store: Pointeur vers le magasin.
- */
 void store_destroy(store_t *store)
 {
 	if (!store)
 		return;
 
-	/* Nettoyage complet des nœuds et des sessions */
 	store_clear(store);
-
-	/* Libération de la structure magasin elle-même */
 	free(store);
 }
